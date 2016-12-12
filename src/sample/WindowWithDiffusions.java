@@ -12,6 +12,7 @@ import static javax.swing.UIManager.getColor;
 
 /**
  * Created by Vadim on 04.12.16.
+ * new CHAAAAAAAAAAAAAAAANGGGGEEEEEE!!!
 */
 
 public class WindowWithDiffusions extends Thread {
