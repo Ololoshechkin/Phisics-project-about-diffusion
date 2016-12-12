@@ -15,7 +15,6 @@ import static javax.swing.UIManager.getColor;
 */
 
 public class WindowWithDiffusions extends Thread {
-    private double newChangePi = 3.141592635895;
     private double D;
     private double borderAlpha;
     private Diffusion[] diffusionModels = new Diffusion[2];
