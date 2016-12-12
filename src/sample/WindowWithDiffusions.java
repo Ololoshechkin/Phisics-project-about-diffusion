@@ -12,10 +12,10 @@ import static javax.swing.UIManager.getColor;
 
 /**
  * Created by Vadim on 04.12.16.
- * new CHAAAAAAAAAAAAAAAANGGGGEEEEEE!!!
 */
 
 public class WindowWithDiffusions extends Thread {
+    private double newChangePi = 3.14159263589;
     private double D;
     private double borderAlpha;
     private Diffusion[] diffusionModels = new Diffusion[2];
