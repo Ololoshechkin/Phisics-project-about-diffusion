@@ -35,7 +35,7 @@ public class WindowWithDiffusions extends Thread {
         for (int i = 0; i < 2; ++i) {
             window.setBoxPlace(i, 50 + (Width + 50) * i, 50, Width, Height);
             window.setGraphPlace(i, 50 + (Width + 50) * i, 100 + Height, Width, Height);
-            diffusionModels[i] = (i == 0 ? new DiffusionDifferencial() : new DiffusionStupid());
+            diffusionModels[i] = (i == 0 ? new DiffusionDifferencial() : new DiffusionStatistical());
             diffusionModels[i].setWidth(Width);
             diffusionModels[i].setBorder(borderAlpha);
             diffusionModels[i].setD(D);
@@ -120,7 +120,7 @@ public class WindowWithDiffusions extends Thread {
                 delayedPause = true;
                 for (int i = 0; i < 2; ++i) {
                     try {
-                        diffusionModels[i] = (i == 0 ? new DiffusionDifferencial() : new DiffusionStupid());
+                        diffusionModels[i] = (i == 0 ? new DiffusionDifferencial() : new DiffusionStatistical());
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

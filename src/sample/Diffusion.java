@@ -6,10 +6,10 @@ import java.awt.*;
  * Created by Vadim on 04.12.16.
  */
 public class Diffusion {
-    protected double X0 = 100;
-    protected double X = X0;
     protected double D = 0.5;
     protected int Width = 1000;
+    protected double X0 = 100;
+    protected double XFirst = X0, XSecond = X0;
     protected Color colorFirst = Color.RED, colorSecond = Color.BLUE;
 
     Diffusion() throws InterruptedException {
@@ -47,7 +47,8 @@ public class Diffusion {
     }
 
     public void start() {
-
+        XFirst = X0;
+        XSecond = X0;
     }
 
     public void update() {
