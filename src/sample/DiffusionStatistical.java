@@ -9,7 +9,8 @@ public class DiffusionStatistical extends Diffusion {
     private double startTime = 0.0, lastTime = 0.0;
     private double[] nFirst, nSecond;
     private double[] nFirst2, nSecond2;
-    private double modelDispersion = 1;
+    private double modelDispersionFirst = 0.01;
+    private double modelDispersionSecond = 0.01;
     private double[] displacements;
     private void createStartParticles() {
         nFirst = new double[super.Width];
@@ -35,8 +36,12 @@ public class DiffusionStatistical extends Diffusion {
         createStartParticles();
     }
 
-    public void setModelDispersion(double dispersion) {
-        modelDispersion = dispersion;
+    public void setModelDispersionFirst(double dispersion) {
+        modelDispersionFirst = dispersion;
+    }
+
+    public void setModelDispersionSecond(double dispersion) {
+        modelDispersionSecond = dispersion;
     }
 
     private void clearN2() {
@@ -66,18 +71,18 @@ public class DiffusionStatistical extends Diffusion {
         clearN2();
         double sumPFirst = 0.0, sumPSecond = 0.0;
         for (int x = 0; x < super.Width; ++x) {
-            sumPFirst += statistics.getProbability((double) x, super.XFirst, modelDispersion);
-            sumPSecond += statistics.getProbability((double) x, super.XSecond, modelDispersion);
+            sumPFirst += statistics.getProbability((double) x, super.XFirst, modelDispersionFirst);
+            sumPSecond += statistics.getProbability((double) x, super.XSecond, modelDispersionSecond);
         }
         for (int x = 0; x < super.Width; ++x) {
-            double pxFirst = statistics.getProbability((double) x, super.XFirst, modelDispersion);
-            double pxSecond = statistics.getProbability((double) x, super.XSecond, modelDispersion);
+            double pxFirst = statistics.getProbability((double) x, super.XFirst, modelDispersionFirst);
+            double pxSecond = statistics.getProbability((double) x, super.XSecond, modelDispersionSecond);
             pxFirst *= 1.0 / sumPFirst;
             pxSecond *= 1.0 / sumPSecond;
-            for (int x2 = 0; x2 < x; ++x2) {
+            for (int x2 = 0; x2 <= x; ++x2) {
                 nFirst2[x2] += pxFirst * getBrightnessFirst();
             }
-            for (int x2 = super.Width - 1; x2 > x; --x2) {
+            for (int x2 = super.Width - 1; x2 >= x; --x2) {
                 nSecond2[x2] += pxSecond * getBrightnessSecond();
             }
         }
@@ -85,7 +90,10 @@ public class DiffusionStatistical extends Diffusion {
             nFirst[x] = nFirst2[x];
             nSecond[x] = nSecond2[x];
         }
-        modelDispersion += 10;
+        //modelDispersionFirst += 10;
+        //modelDispersionSecond += 10;
+        if (XFirst == 0) modelDispersionFirst = 0.001;
+        if (XSecond == super.Width) modelDispersionSecond = 0.001;
         lastTime = System.currentTimeMillis();
     }
 

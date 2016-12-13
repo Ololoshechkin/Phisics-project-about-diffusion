@@ -51,7 +51,7 @@ public class MyJFrame extends JFrame {
 
     @Override
     public void paint(Graphics g) {
-        super.paint(g);
+        //super.paint(g);
     }
 
     void drawLine(int i, int x, Color color) {
@@ -83,7 +83,8 @@ public class MyJFrame extends JFrame {
     }
 
     void clearAt(int x0, int y0, int W, int H) {
-        getGraphics().clearRect(x0, y0, W, H);
+        Graphics g = getGraphics();
+        g.clearRect(x0, y0, W, H);
     }
 
     void clearAll() {
@@ -96,12 +97,19 @@ public class MyJFrame extends JFrame {
 
     void clearGraph(int i) {
         clearAt(X0Graph[i], Y0Graph[i], WidthGraph[i], HeightGraph[i]);
+        drawRect(X0Graph[i], Y0Graph[i], WidthGraph[i], HeightGraph[i], Color.BLACK);
         Graphics g = this.getGraphics();
         g.setColor(black);
         g.drawLine(X0Graph[i], Y0Graph[i], X0Graph[i] + WidthGraph[i], Y0Graph[i]);
         g.drawLine(X0Graph[i] + WidthGraph[i], Y0Graph[i], X0Graph[i] + WidthGraph[i], Y0Graph[i] + HeightGraph[i]);
         g.drawLine(X0Graph[i] + WidthGraph[i], Y0Graph[i] + HeightGraph[i], X0Graph[i], Y0Graph[i] + HeightGraph[i]);
         g.drawLine(X0Graph[i], Y0Graph[i] + HeightGraph[i], X0Graph[i], Y0Graph[i]);
+    }
+
+    void drawRect(int x0, int y0, int W, int H, Color color) {
+        Graphics g = getGraphics();
+        g.setColor(color);
+        g.fillRect(x0, y0, W, H);
     }
 
     void delay(int t) throws InterruptedException {
@@ -114,7 +122,7 @@ public class MyJFrame extends JFrame {
     }
 
     void startGui() {
-        getContentPane().add(guiPanel);
+        //getContentPane().add(guiPanel);
         setVisible(true);
     }
 
@@ -148,8 +156,19 @@ public class MyJFrame extends JFrame {
                 }
             }
         };
-        guiPanel.addKeyListener(keyListener);
         addKeyListener(keyListener);
+        guiPanel.addKeyListener(keyListener);
+        JLabel label = new JLabel("Press 'space' to start/pause   and   'R' to restart");
+        //JButton label = new JButton("OK");
+        label.setBounds(50, 10, 1000, 12);
+        label.setBackground(Color.green);
+        label.addKeyListener(keyListener);
+        add(label);
+        //getContentPane().add(label);
+    }
+
+    public void myRepaint() {
+        paintComponents(this.getGraphics());
     }
 
     public boolean isPaused() {

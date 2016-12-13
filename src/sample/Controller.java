@@ -167,6 +167,8 @@ public class Controller {
             double koef = getKoef(s1.getMass(), s2.getMass(), s1.getRadiius(), s2.getRadiius(), Temperature, Pressure);
             double k = Double.parseDouble(gasSub.getText()) / 100.;
             WindowWithDiffusions window = new WindowWithDiffusions(koef, k);
+            //window.setColorFirstByRGB(255, 0, 0);
+            //window.setColorSecondByRGB(0, 0, 255);
             window.start();
         }
     }

@@ -41,12 +41,6 @@ public class WindowWithDiffusions extends Thread {
             diffusionModels[i].setD(D);
             diffusionModels[i].start();
         }
-
-        //JLabel label = new JLabel("Press 'space' to start/pause   and   'R' to restart");
-        JButton label = new JButton("BUTTOOOON");
-        label.setBounds(50, screenSize.height - 110, 100, 10);
-        //label.setBackground(Color.green);
-        window.addComponent(label);
         window.startGui();
         window.wannaPaused();
     }
@@ -68,20 +62,20 @@ public class WindowWithDiffusions extends Thread {
                 (int)(nFirst * colorLeft.getBlue() + nSecond * colorRight.getBlue()));
     }
 
-    private void updateModels(int iteration) {
+    private void updateModels(int iteration, boolean delayedPause) {
         for (int i = 0; i < 2; ++i) {
             for (int x = 0; x < Width; ++x) {
                 window.drawLine(i, x, diffusionModels[i].getColor(x));
             }
-            if (iteration % 2 == 0) {
+            if (iteration % 2 == 0 || delayedPause) {
                 window.clearGraph(i);
                 window.setStartPlotPoint(i, 0, diffusionModels[i].getNFirst(0), colorLeft);
-                for (int x = 0; x < Width; x += 5) {
+                for (int x = 0; x < Width; x += 2) {
                     window.drawPlotPoint(i, x, diffusionModels[i].getNFirst(x));
                 }
                 window.drawPlotPoint(i, Width - 1, diffusionModels[i].getNFirst(Width - 1));
                 window.setStartPlotPoint(i, Width - 1, diffusionModels[i].getNSecond(Width - 1), colorRight);
-                for (int x = Width - 1; x >= 0; x -= 5) {
+                for (int x = Width - 1; x >= 0; x -= 2) {
                     window.drawPlotPoint(i, x, diffusionModels[i].getNSecond(x));
                 }
                 window.drawPlotPoint(i, 0, diffusionModels[i].getNSecond(0));
@@ -93,6 +87,7 @@ public class WindowWithDiffusions extends Thread {
             } else {
                 diffusionModels[i].update();
             }
+            if (i == 1 && iteration == -1) window.myRepaint();
             try {
                 sleep(10);
             } catch (InterruptedException e) {
@@ -108,8 +103,7 @@ public class WindowWithDiffusions extends Thread {
             diffusionModels[i].setColorFirst(colorLeft);
             diffusionModels[i].setColorSecond(colorRight);
         }
-        for (iteration = 0; iteration < 2; ++iteration)
-            updateModels(0);
+        updateModels(-1, true);
         boolean delayedPause = false;
         window.dontWannaPaused();
         window.wannaOneMore();
@@ -145,7 +139,7 @@ public class WindowWithDiffusions extends Thread {
                 }
                 continue;
             }
-            updateModels(iteration);
+            updateModels(iteration, delayedPause);
             if (delayedPause) {
                 window.wannaPaused();
                 window.dontWannaOneMore();
