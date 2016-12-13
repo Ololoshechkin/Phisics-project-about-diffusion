@@ -13,6 +13,7 @@ import static java.awt.Color.black;
 /**
  * Created by Vadim on 04.12.16.
  */
+// change
 public class MyJFrame extends JFrame {
 
     private int Width = 1000;
