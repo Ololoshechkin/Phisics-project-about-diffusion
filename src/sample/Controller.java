@@ -143,7 +143,8 @@ public class Controller {
             String s = firstSubstance.getText();
             double k = Double.parseDouble(s) / 100.;
             double koef = Double.parseDouble(dDiffusion.getText());
-            WindowWithDiffusions window = new WindowWithDiffusions(koef, k);
+            //WindowWithDiffusions window = new WindowWithDiffusions(koef, k);
+            WindowWithDiffusionAndEntrophy window = new WindowWithDiffusionAndEntrophy(koef, k);
             window.setColorFirstByRGB((int)(first.getRed() * 255), (int)(first.getGreen() * 255), (int)(first.getBlue() * 255));
             window.setColorSecondByRGB((int)(second.getRed() * 255), (int)(second.getGreen() * 255), (int)(second.getBlue() * 255));
             window.start();
@@ -167,7 +168,8 @@ public class Controller {
             Temperature = Double.parseDouble(temp.getText());
             double koef = getKoef(s1.getMass(), s2.getMass(), s1.getRadiius(), s2.getRadiius(), Temperature, Pressure);
             double k = Double.parseDouble(gasSub.getText()) / 100.;
-            WindowWithDiffusions window = new WindowWithDiffusions(koef, k);
+            //WindowWithDiffusions window = new WindowWithDiffusions(koef, k);
+            WindowWithDiffusionAndEntrophy window = new WindowWithDiffusionAndEntrophy(koef, k);
             //window.setColorFirstByRGB(255, 0, 0);
             //window.setColorSecondByRGB(0, 0, 255);
             window.start();

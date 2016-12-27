@@ -70,20 +70,41 @@ public class MyJFrame extends JFrame {
     }
 
     void setStartPlotPoint(int i, int x, double n) {
-        int realX = X0Graph[i] +  x * WidthGraph[i] / WidthBox[i], realY = Y0Graph[i] + (int)((1.0 - n) * HeightGraph[i] / HeightBox[i]);
+        int realX, realY;
+        if (WidthBox[i] != 0 && HeightBox[i] != 0) {
+            realX = X0Graph[i] +  x * WidthGraph[i] / WidthBox[i];
+            realY = Y0Graph[i] + (int)((1.0 - n) * HeightGraph[i]);
+        } else {
+            realX = X0Graph[i] + x;
+            realY = Y0Graph[i] + (int)((1.0 - n) * HeightGraph[i]);
+        }
         currentPlotPosX[i] = realX;
         currentPlotPosY[i] = realY;
     }
 
     void setStartPlotPoint(int i, int x, double n, Color color) {
-        int realX = X0Graph[i] +  x * WidthGraph[i] / WidthBox[i], realY = Y0Graph[i] + (int)((1.0 - n) * HeightGraph[i]);
+        int realX, realY;
+        if (WidthBox[i] != 0 && HeightBox[i] != 0) {
+            realX = X0Graph[i] +  x * WidthGraph[i] / WidthBox[i];
+            realY = Y0Graph[i] + (int)((1.0 - n) * HeightGraph[i]);
+        } else {
+            realX = X0Graph[i] + x;
+            realY = Y0Graph[i] + (int)((1.0 - n) * HeightGraph[i]);
+        }
         currentPlotPosX[i] = realX;
         currentPlotPosY[i] = realY;
         currentColor[i] = color;
     }
 
     void drawPlotPoint(int i, int x, double n) {
-        int realX = X0Graph[i] + x * WidthGraph[i] / WidthBox[i], realY = Y0Graph[i] + (int)((1.0 - n) * HeightGraph[i]);
+        int realX, realY;
+        if (WidthBox[i] != 0 && HeightBox[i] != 0) {
+            realX = X0Graph[i] +  x * WidthGraph[i] / WidthBox[i];
+            realY = Y0Graph[i] + (int)((1.0 - n) * HeightGraph[i]);
+        } else {
+            realX = X0Graph[i] + x;
+            realY = Y0Graph[i] + (int)((1.0 - n) * HeightGraph[i]);
+        }
         Graphics g = this.panel.getGraphics();
         g.setColor(currentColor[i]);
         g.drawLine(currentPlotPosX[i], currentPlotPosY[i], realX, realY);
@@ -134,7 +155,7 @@ public class MyJFrame extends JFrame {
         setWidth(width);
         setHeight(height);
         setBounds(0, 0, width, height);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         X0Box = new int[4];
         Y0Box = new int[4];
         WidthBox = new int[4];
@@ -151,7 +172,7 @@ public class MyJFrame extends JFrame {
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_SPACE) {
                     paused = !paused;
-                    System.out.println("space");
+                    //System.out.println("space");
                 }
                 if (e.getKeyCode() == KeyEvent.VK_R) {
                     oneMore = true;
@@ -166,7 +187,7 @@ public class MyJFrame extends JFrame {
         panel.setBackground(Color.DARK_GRAY);
         slider = new JSlider(minSpeed, maxSpeed, defaultSpeed);
         Dimension screenSize =  Toolkit.getDefaultToolkit().getScreenSize();
-        slider.setBounds(50, (int) screenSize.getHeight() - 140, (int) screenSize.getWidth() - 100, 20);
+        slider.setBounds(50, (int) screenSize.getHeight() - 140, (int) screenSize.getWidth() - 200, 20);
         slider.addKeyListener(keyListener);
         panel.addKeyListener(keyListener);
         addKeyListener(keyListener);

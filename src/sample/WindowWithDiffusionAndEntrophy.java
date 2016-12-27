@@ -1,11 +1,13 @@
 package sample;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 /**
  * Created by Vadim on 27.12.16.
  */
 public class WindowWithDiffusionAndEntrophy extends Thread {
+    //свыфв
     private DiffusionDifferencial diffusion;
     private double D;
     private double borderAlpha;
@@ -13,6 +15,9 @@ public class WindowWithDiffusionAndEntrophy extends Thread {
     private int Width, Height;
     private Color colorLeft = Color.RED, colorRight = Color.BLUE;
     private double correctionSpeed = 1.0;
+    private double startTime = 0;
+    private double curTime = 0;
+    private ArrayList<Double> N1 = new ArrayList<Double>(), N2 = new ArrayList<Double>();
 
     WindowWithDiffusionAndEntrophy(double d, double borderalpha) throws InterruptedException {
         D = d;
@@ -63,6 +68,23 @@ public class WindowWithDiffusionAndEntrophy extends Thread {
                 (int)(nFirst * colorLeft.getBlue() + nSecond * colorRight.getBlue()));
     }
 
+    private void updateEntrophy(int iterations) {
+        double n1 = 0.0, n2 = 0.0;
+        double s1 = 0.0, s2 = 0.0;
+        for (int x = 0; x < Width; ++x) {
+            n1 += diffusion.getNFirst(x) * x;
+            n2 += diffusion.getNSecond(x) * x;
+            s1 += diffusion.getNFirst(x);
+            s2 += diffusion.getNSecond(x);
+        }
+        n1 /= s1;
+        n2 /= s2;
+        n1 /= Width;
+        n2 /= Width;
+        if (N1.size() < 3 || Math.abs(N1.get(N1.size() - 1) - n1) > 0.01) N1.add(n1);
+        if (N2.size() < 3 || Math.abs(N2.get(N2.size() - 1) - n1) > 0.01) N2.add(n2);
+    }
+
     private void updateModels(int iteration, boolean delayedPause) {
         for (int x = 0; x < Width; ++x) {
             window.drawLine(0, x, diffusion.getColor(x));
@@ -74,15 +96,44 @@ public class WindowWithDiffusionAndEntrophy extends Thread {
                 window.drawPlotPoint(0, x, diffusion.getNFirst(x));
             }
             window.drawPlotPoint(0, Width - 1, diffusion.getNFirst(Width - 1));
+
             window.setStartPlotPoint(0, Width - 1, diffusion.getNSecond(Width - 1), colorRight);
             for (int x = Width - 1; x >= 0; x -= 2) {
                 window.drawPlotPoint(0, x, diffusion.getNSecond(x));
             }
             window.drawPlotPoint(0, 0, diffusion.getNSecond(0));
-        }
-        for (int i = 1; i <= 2; ++i) {
 
+            double n1 = 0.0, n2 = 0.0;
+            double s1 = 0.0, s2 = 0.0;
+            for (int x = 0; x < Width; ++x) {
+                n1 += diffusion.getNFirst(x) * x;
+                n2 += diffusion.getNSecond(x) * x;
+                s1 += diffusion.getNFirst(x);
+                s2 += diffusion.getNSecond(x);
+            }
+            n1 /= s1;
+            n2 /= s2;
+            n1 /= Width;
+            n2 /= Width;
+            N1.add(n1);
+            N2.add(n2);
+            if (iteration % 5 == 0 || delayedPause) {
+                window.clearGraph(1);
+                window.setStartPlotPoint(1, 0, N1.get(0), colorLeft);
+                for (int x = 0; x < N1.size(); ++x) {
+                    int X = x * Width / N1.size();
+                    window.drawPlotPoint(1, X, N1.get(x));
+                }
+                window.drawPlotPoint(1, Width - 1, N1.get(N1.size() - 1));
+                window.setStartPlotPoint(1, 0, N2.get(0), colorRight);
+                for (int x = 0; x < N2.size(); ++x) {
+                    int X = x * Width / N2.size();
+                    window.drawPlotPoint(1, X, N2.get(x));
+                }
+                window.drawPlotPoint(1, Width - 1, N2.get(N2.size() - 1));
+            }
         }
+
         diffusion.multipleUpdate(5000, window.getSpeed());
         try {
             sleep(10);
@@ -94,10 +145,8 @@ public class WindowWithDiffusionAndEntrophy extends Thread {
     @Override
     public void run() {
         int iteration = 0;
-        for (int i = 0; i < 2; ++i) {
-            diffusionModels[i].setColorFirst(colorLeft);
-            diffusionModels[i].setColorSecond(colorRight);
-        }
+        diffusion.setColorFirst(colorLeft);
+        diffusion.setColorSecond(colorRight);
         updateModels(-1, true);
         boolean delayedPause = false;
         window.dontWannaPaused();
@@ -108,19 +157,17 @@ public class WindowWithDiffusionAndEntrophy extends Thread {
                 window.dontWannaOneMore();
                 window.dontWannaPaused();
                 delayedPause = true;
-                for (int i = 0; i < 2; ++i) {
-                    try {
-                        diffusionModels[i] = (i == 0 ? new DiffusionDifferencial() : new DiffusionStatistical());
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    diffusionModels[i].setWidth(Width);
-                    diffusionModels[i].setBorder(borderAlpha);
-                    diffusionModels[i].setD(D);
-                    diffusionModels[i].setColorFirst(colorLeft);
-                    diffusionModels[i].setColorSecond(colorRight);
-                    diffusionModels[i].start();
+                try {
+                    diffusion = new DiffusionDifferencial();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
+                diffusion.setWidth(Width);
+                diffusion.setBorder(borderAlpha);
+                diffusion.setD(D);
+                diffusion.setColorFirst(colorLeft);
+                diffusion.setColorSecond(colorRight);
+                diffusion.start();
                 try {
                     sleep(10);
                 } catch (InterruptedException e) {
