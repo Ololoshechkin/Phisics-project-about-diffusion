@@ -182,6 +182,7 @@ public class MyJFrame extends JFrame {
                 }
             }
         };
+        setBackground(Color.WHITE);
         panel = new JPanel();
         panel.setLayout(null);
         panel.setBackground(Color.DARK_GRAY);

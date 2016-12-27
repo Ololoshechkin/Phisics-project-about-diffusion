@@ -1,5 +1,6 @@
 package sample;
 
+import javax.swing.text.Document;
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -7,7 +8,6 @@ import java.util.ArrayList;
  * Created by Vadim on 27.12.16.
  */
 public class WindowWithDiffusionAndEntrophy extends Thread {
-    //свыфв
     private DiffusionDifferencial diffusion;
     private double D;
     private double borderAlpha;
@@ -18,6 +18,36 @@ public class WindowWithDiffusionAndEntrophy extends Thread {
     private double startTime = 0;
     private double curTime = 0;
     private ArrayList<Double> N1 = new ArrayList<Double>(), N2 = new ArrayList<Double>();
+    private ArrayList<Double> S = new ArrayList<Double>();
+
+    private double getLnFact(double n) {
+        n *= Width;
+        double ans = 0.0;
+        for (double x = 1.0; x <= n; x += 1.0) {
+            ans += Math.log(x);
+        }
+        return ans;
+    }
+
+    private double getEnthrophy1() {
+        double ans = 0.0, sumN = 0.0;
+        for (int x = 0; x < Width; ++x) {
+            ans -= getLnFact(diffusion.getNFirst(x));
+            sumN += diffusion.getNFirst(x);
+        }
+        ans += getLnFact(sumN);
+        return ans;
+    }
+
+    private double getEnthrophy2() {
+        double ans = 0.0, sumN = 0.0;
+        for (int x = 0; x < Width; ++x) {
+            ans -= getLnFact(diffusion.getNSecond(x));
+            sumN += diffusion.getNSecond(x);
+        }
+        ans += getLnFact(sumN);
+        return ans;
+    }
 
     WindowWithDiffusionAndEntrophy(double d, double borderalpha) throws InterruptedException {
         D = d;
@@ -30,6 +60,7 @@ public class WindowWithDiffusionAndEntrophy extends Thread {
             D /= correctionSpeed * correctionSpeed;
         }
         borderAlpha = borderalpha;
+        System.out.println("borderalpga = " + borderalpha);
         Dimension screenSize =  Toolkit.getDefaultToolkit().getScreenSize();
         window = new MyJFrame(screenSize.width, screenSize.height);
         Width = (screenSize.width - 250) / 2;
@@ -67,24 +98,6 @@ public class WindowWithDiffusionAndEntrophy extends Thread {
                 (int)(nFirst * colorLeft.getGreen() + nSecond * colorRight.getGreen()),
                 (int)(nFirst * colorLeft.getBlue() + nSecond * colorRight.getBlue()));
     }
-
-    private void updateEntrophy(int iterations) {
-        double n1 = 0.0, n2 = 0.0;
-        double s1 = 0.0, s2 = 0.0;
-        for (int x = 0; x < Width; ++x) {
-            n1 += diffusion.getNFirst(x) * x;
-            n2 += diffusion.getNSecond(x) * x;
-            s1 += diffusion.getNFirst(x);
-            s2 += diffusion.getNSecond(x);
-        }
-        n1 /= s1;
-        n2 /= s2;
-        n1 /= Width;
-        n2 /= Width;
-        if (N1.size() < 3 || Math.abs(N1.get(N1.size() - 1) - n1) > 0.01) N1.add(n1);
-        if (N2.size() < 3 || Math.abs(N2.get(N2.size() - 1) - n1) > 0.01) N2.add(n2);
-    }
-
     private void updateModels(int iteration, boolean delayedPause) {
         for (int x = 0; x < Width; ++x) {
             window.drawLine(0, x, diffusion.getColor(x));
@@ -117,7 +130,12 @@ public class WindowWithDiffusionAndEntrophy extends Thread {
             n2 /= Width;
             N1.add(n1);
             N2.add(n2);
-            if (iteration % 5 == 0 || delayedPause) {
+            double curS = getEnthrophy1() + getEnthrophy2();
+            curS /= 1655175.5;
+            curS = (curS - 0.8) * (0.6 / 0.2) + 0.4;
+            S.add(curS);
+            System.out.println(S.get(S.size() - 1));
+            if (iteration % 4 == 0 || delayedPause) {
                 window.clearGraph(1);
                 window.setStartPlotPoint(1, 0, N1.get(0), colorLeft);
                 for (int x = 0; x < N1.size(); ++x) {
@@ -131,6 +149,14 @@ public class WindowWithDiffusionAndEntrophy extends Thread {
                     window.drawPlotPoint(1, X, N2.get(x));
                 }
                 window.drawPlotPoint(1, Width - 1, N2.get(N2.size() - 1));
+
+                window.clearGraph(2);
+                window.setStartPlotPoint(2, 0, S.get(0), getColorSuperposition(0.5, 0.5));
+                for (int x = 0; x < S.size(); ++x) {
+                    int X = x * Width / S.size();
+                    window.drawPlotPoint(2, X, S.get(x));
+                }
+                window.drawPlotPoint(2, Width - 1, S.get(S.size() - 1));
             }
         }
 
