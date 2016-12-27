@@ -22,10 +22,14 @@ public class MyJFrame extends JFrame {
     private int[] X0Graph, Y0Graph, WidthGraph, HeightGraph;
     private int[] currentPlotPosX, currentPlotPosY;
     private Color[] currentColor = {Color.BLACK, Color.BLACK, Color.BLACK, Color.BLACK};
-    private JPanel guiPanel = new JPanel();
     private boolean paused = false;
     private boolean oneMore = false;
     private KeyListener keyListener;
+    private JSlider slider;
+    private JPanel panel;
+    private int minSpeed = 0;
+    private int maxSpeed = 20000;
+    private int defaultSpeed = 500;
 
     public void setWidth(int W) {
         Width = W;
@@ -52,10 +56,15 @@ public class MyJFrame extends JFrame {
     @Override
     public void paint(Graphics g) {
         //super.paint(g);
+        Color color = g.getColor();
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("Courier New", Font.ITALIC, 15));
+        g.drawString("Нажмите ПРОБЕЛ для паузы/старта и R для рестарта ; также можете нажать D для установки скорости по умолчанию", 100, 35);
+        g.setColor(color);
     }
 
     void drawLine(int i, int x, Color color) {
-        Graphics g = this.getGraphics();
+        Graphics g = panel.getGraphics();
         g.setColor(color);
         g.drawLine(X0Box[i] + x, Y0Box[i], X0Box[i] + x, Y0Box[i] + HeightBox[i]);
     }
@@ -75,7 +84,7 @@ public class MyJFrame extends JFrame {
 
     void drawPlotPoint(int i, int x, double n) {
         int realX = X0Graph[i] + x * WidthGraph[i] / WidthBox[i], realY = Y0Graph[i] + (int)((1.0 - n) * HeightGraph[i]);
-        Graphics g = this.getGraphics();
+        Graphics g = this.panel.getGraphics();
         g.setColor(currentColor[i]);
         g.drawLine(currentPlotPosX[i], currentPlotPosY[i], realX, realY);
         currentPlotPosX[i] = realX;
@@ -83,7 +92,7 @@ public class MyJFrame extends JFrame {
     }
 
     void clearAt(int x0, int y0, int W, int H) {
-        Graphics g = getGraphics();
+        Graphics g = panel.getGraphics();
         g.clearRect(x0, y0, W, H);
     }
 
@@ -98,7 +107,7 @@ public class MyJFrame extends JFrame {
     void clearGraph(int i) {
         clearAt(X0Graph[i], Y0Graph[i], WidthGraph[i], HeightGraph[i]);
         drawRect(X0Graph[i], Y0Graph[i], WidthGraph[i], HeightGraph[i], Color.BLACK);
-        Graphics g = this.getGraphics();
+        Graphics g = this.panel.getGraphics();
         g.setColor(black);
         g.drawLine(X0Graph[i], Y0Graph[i], X0Graph[i] + WidthGraph[i], Y0Graph[i]);
         g.drawLine(X0Graph[i] + WidthGraph[i], Y0Graph[i], X0Graph[i] + WidthGraph[i], Y0Graph[i] + HeightGraph[i]);
@@ -107,7 +116,7 @@ public class MyJFrame extends JFrame {
     }
 
     void drawRect(int x0, int y0, int W, int H, Color color) {
-        Graphics g = getGraphics();
+        Graphics g = panel.getGraphics();
         g.setColor(color);
         g.fillRect(x0, y0, W, H);
     }
@@ -116,13 +125,7 @@ public class MyJFrame extends JFrame {
         TimeUnit.MILLISECONDS.sleep(t);
     }
 
-    void addComponent(Component component) {
-        component.addKeyListener(keyListener);
-        guiPanel.add(component);
-    }
-
     void startGui() {
-        //getContentPane().add(guiPanel);
         setVisible(true);
     }
 
@@ -131,8 +134,7 @@ public class MyJFrame extends JFrame {
         setWidth(width);
         setHeight(height);
         setBounds(0, 0, width, height);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setLayout(null);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         X0Box = new int[4];
         Y0Box = new int[4];
         WidthBox = new int[4];
@@ -144,31 +146,40 @@ public class MyJFrame extends JFrame {
         currentPlotPosX = new int[4];
         currentPlotPosY = new int[4];
         currentPlotPosY = new int[4];
-        guiPanel.setLayout(null);
         keyListener = new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_SPACE) {
                     paused = !paused;
+                    System.out.println("space");
                 }
                 if (e.getKeyCode() == KeyEvent.VK_R) {
                     oneMore = true;
                 }
+                if (e.getKeyCode() == KeyEvent.VK_D) {
+                    slider.setValue(defaultSpeed);
+                }
             }
         };
+        panel = new JPanel();
+        panel.setLayout(null);
+        panel.setBackground(Color.DARK_GRAY);
+        slider = new JSlider(minSpeed, maxSpeed, defaultSpeed);
+        Dimension screenSize =  Toolkit.getDefaultToolkit().getScreenSize();
+        slider.setBounds(50, (int) screenSize.getHeight() - 140, (int) screenSize.getWidth() - 100, 20);
+        slider.addKeyListener(keyListener);
+        panel.addKeyListener(keyListener);
         addKeyListener(keyListener);
-        guiPanel.addKeyListener(keyListener);
-        JLabel label = new JLabel("Press 'space' to start/pause   and   'R' to restart");
-        //JButton label = new JButton("OK");
-        label.setBounds(50, 10, 1000, 12);
-        label.setBackground(Color.green);
-        label.addKeyListener(keyListener);
-        add(label);
-        //getContentPane().add(label);
+        panel.add(slider);
+        add(panel);
+    }
+
+    public double getSpeed() {
+        return (double) slider.getValue() / (maxSpeed - minSpeed);
     }
 
     public void myRepaint() {
-        paintComponents(this.getGraphics());
+        paintComponents(this.panel.getGraphics());
     }
 
     public boolean isPaused() {

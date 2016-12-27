@@ -9,15 +9,15 @@ public class DiffusionStatistical extends Diffusion {
     private double startTime = 0.0, lastTime = 0.0;
     private double[] nFirst, nSecond;
     private double[] nFirst2, nSecond2;
-    private double modelDispersionFirst = 0.01;
-    private double modelDispersionSecond = 0.01;
-    private double[] displacements;
+    private double modelDispersionFirst = 50;
+    private double modelDispersionSecond = 50;
+    private double lastT = 0.0;
+
     private void createStartParticles() {
         nFirst = new double[super.Width];
         nSecond = new double[super.Width];
         nFirst2 = new double[super.Width];
         nSecond2 = new double[super.Width];
-        displacements = new double[super.Width];
         for (int x = 0; x < super.Width; ++x) {
             nFirst[x] = (x < super.X0 ?  1.0 : 0.0);
             nSecond[x] = (x > super.X0 ? 1.0 : 0.0);
@@ -62,10 +62,11 @@ public class DiffusionStatistical extends Diffusion {
     @Override
     public void update() {
         super.update();
-        double t = 0.001 * (System.currentTimeMillis() - lastTime);
-        double mathExpectationOfDisplacement = statistics.getXBySqrX(2.0 * super.D * t);
-        XFirst += mathExpectationOfDisplacement;
-        XSecond -= mathExpectationOfDisplacement;
+        double dt = 0.05 * super.speedConst * (System.currentTimeMillis() - lastTime);
+        double t = lastT + dt;
+        double mathExpectationOfDisplacement = Math.sqrt(2.0 * super.D * t);//statistics.getXBySqrX(2.0 * super.D * t);
+        XFirst = X0 + mathExpectationOfDisplacement;
+        XSecond = X0 - mathExpectationOfDisplacement;
         XFirst = Math.min(super.Width, XFirst);
         XSecond = Math.max(0.0, XSecond);
         clearN2();
@@ -95,8 +96,14 @@ public class DiffusionStatistical extends Diffusion {
         if (XFirst == 0) modelDispersionFirst = 0.001;
         if (XSecond == super.Width) modelDispersionSecond = 0.001;
         lastTime = System.currentTimeMillis();
+        lastT = t;
     }
 
+    @Override
+    public void multipleUpdate(int iterations, double speedConstant) {
+        super.multipleUpdate(iterations, speedConstant);
+        update();
+    }
 
     @Override
     public Color getColor(int x) {

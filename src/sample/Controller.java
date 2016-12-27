@@ -153,7 +153,8 @@ public class Controller {
     double getKoef (double mas1, double mas2, double rad1, double rad2, double t, double p){
         t += 273.;
         double chis = (1.858 / 1000.) * Math.sqrt(t * t * t) * Math.sqrt((1./mas1 + 1./mas2)/1000.);
-        double zn = p * (1./2.) * ((rad1 + rad2) / 1000_000_000.);
+        double r = (rad1 + rad2) / 1000_000_000.;
+        double zn = p * (1./2.) * r * r;
         return chis/zn;
     }
 

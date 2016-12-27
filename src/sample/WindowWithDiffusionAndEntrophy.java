@@ -1,30 +1,20 @@
 package sample;
-import javafx.scene.paint.*;
 
-import javax.swing.*;
 import java.awt.*;
-import java.awt.Color;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.util.concurrent.TimeUnit;
-
-import static javax.swing.UIManager.getColor;
 
 /**
- * Created by Vadim on 04.12.16.
-*/
-
-public class WindowWithDiffusions extends Thread {
+ * Created by Vadim on 27.12.16.
+ */
+public class WindowWithDiffusionAndEntrophy extends Thread {
+    private DiffusionDifferencial diffusion;
     private double D;
     private double borderAlpha;
-    private Diffusion[] diffusionModels = new Diffusion[2];
     private MyJFrame window;
     private int Width, Height;
     private Color colorLeft = Color.RED, colorRight = Color.BLUE;
     private double correctionSpeed = 1.0;
-    //private SpeedJFrame speedWindow;
 
-    WindowWithDiffusions(double d, double borderalpha) throws InterruptedException {
+    WindowWithDiffusionAndEntrophy(double d, double borderalpha) throws InterruptedException {
         D = d;
         if (Math.abs(DiffusionDifferencial.getAlphaBy(D)) > 0.5) {
             //x(t) = sqrt(2Dt)
@@ -40,15 +30,17 @@ public class WindowWithDiffusions extends Thread {
         Width = (screenSize.width - 250) / 2;
         Height = (screenSize.height - 250) / 2;
 
-        for (int i = 0; i < 2; ++i) {
-            window.setBoxPlace(i, 50 + (Width + 50) * i, 50, Width, Height);
-            window.setGraphPlace(i, 50 + (Width + 50) * i, 100 + Height, Width, Height);
-            diffusionModels[i] = (i == 0 ? new DiffusionDifferencial() : new DiffusionStatistical());
-            diffusionModels[i].setWidth(Width);
-            diffusionModels[i].setBorder(borderAlpha);
-            diffusionModels[i].setD(D);
-            diffusionModels[i].start();
+        window.setBoxPlace(0, 50 , 50, Width, Height);
+        window.setGraphPlace(0, 50, 100 + Height, Width, Height);
+        for (int i = 1; i <= 2; ++i) {
+            window.setGraphPlace(i, 100 + Width, 50 + (50 + Height) * (i - 1), Width, Height);
         }
+        diffusion = new DiffusionDifferencial();
+        diffusion.setWidth(Width);
+        diffusion.setBorder(borderAlpha);
+        diffusion.setD(D);
+        diffusion.start();
+
         window.startGui();
         window.wannaPaused();
         //speedWindow = new SpeedJFrame((int) screenSize.getWidth() - 200, (int) screenSize.getHeight() - 60,200, 60);
@@ -72,29 +64,30 @@ public class WindowWithDiffusions extends Thread {
     }
 
     private void updateModels(int iteration, boolean delayedPause) {
-        for (int i = 0; i < 2; ++i) {
-            for (int x = 0; x < Width; ++x) {
-                window.drawLine(i, x, diffusionModels[i].getColor(x));
+        for (int x = 0; x < Width; ++x) {
+            window.drawLine(0, x, diffusion.getColor(x));
+        }
+        if (iteration % 2 == 0 || delayedPause) {
+            window.clearGraph(0);
+            window.setStartPlotPoint(0, 0, diffusion.getNFirst(0), colorLeft);
+            for (int x = 0; x < Width; x += 2) {
+                window.drawPlotPoint(0, x, diffusion.getNFirst(x));
             }
-            if (iteration % 2 == 0 || delayedPause) {
-                window.clearGraph(i);
-                window.setStartPlotPoint(i, 0, diffusionModels[i].getNFirst(0), colorLeft);
-                for (int x = 0; x < Width; x += 2) {
-                    window.drawPlotPoint(i, x, diffusionModels[i].getNFirst(x));
-                }
-                window.drawPlotPoint(i, Width - 1, diffusionModels[i].getNFirst(Width - 1));
-                window.setStartPlotPoint(i, Width - 1, diffusionModels[i].getNSecond(Width - 1), colorRight);
-                for (int x = Width - 1; x >= 0; x -= 2) {
-                    window.drawPlotPoint(i, x, diffusionModels[i].getNSecond(x));
-                }
-                window.drawPlotPoint(i, 0, diffusionModels[i].getNSecond(0));
+            window.drawPlotPoint(0, Width - 1, diffusion.getNFirst(Width - 1));
+            window.setStartPlotPoint(0, Width - 1, diffusion.getNSecond(Width - 1), colorRight);
+            for (int x = Width - 1; x >= 0; x -= 2) {
+                window.drawPlotPoint(0, x, diffusion.getNSecond(x));
             }
-            diffusionModels[i].multipleUpdate(5000, window.getSpeed());
-            try {
-                sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            window.drawPlotPoint(0, 0, diffusion.getNSecond(0));
+        }
+        for (int i = 1; i <= 2; ++i) {
+
+        }
+        diffusion.multipleUpdate(5000, window.getSpeed());
+        try {
+            sleep(10);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
