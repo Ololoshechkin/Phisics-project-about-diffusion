@@ -1,5 +1,4 @@
 package sample;
-import com.sun.tools.internal.xjc.reader.gbind.OneOrMore;
 
 import javax.swing.*;
 import java.awt.*;
@@ -9,10 +8,6 @@ import java.awt.event.KeyListener;
 import java.util.concurrent.TimeUnit;
 
 import static java.awt.Color.black;
-
-/**
- * Created by Vadim on 04.12.16.
- */
 // change
 public class MyJFrame extends JFrame {
 
@@ -30,6 +25,7 @@ public class MyJFrame extends JFrame {
     private int minSpeed = 0;
     private int maxSpeed = 20000;
     private int defaultSpeed = 500;
+    private boolean is2models = true;
 
     public void setWidth(int W) {
         Width = W;
@@ -58,8 +54,23 @@ public class MyJFrame extends JFrame {
         //super.paint(g);
         Color color = g.getColor();
         g.setColor(Color.BLACK);
-        g.setFont(new Font("Courier New", Font.ITALIC, 15));
+        g.setFont(new Font("Courier New", Font.BOLD, 15));
         g.drawString("Нажмите ПРОБЕЛ для паузы/старта и R для рестарта ; также можете нажать D для установки скорости по умолчанию", 100, 35);
+        if (is2models) {
+            g.setColor(Color.RED);
+            g.drawString("Модель, решающая дифференциальное уравнение :", 50, 50);
+            g.drawString("Модель, использующая среднеквадратичное отклонение :", 100 + WidthBox[0], 50);
+            g.setColor(Color.BLUE);
+            g.drawString("Графики зависимости концентрации от координаты для 1й модели : ", 50 , 100 + HeightBox[0]);
+            g.drawString("Графики зависимости концентрации от координаты для 1й модели : ", 100 + WidthBox[0], 100 + HeightBox[0]);
+        } else {
+            g.setColor(Color.RED);
+            g.drawString("Модель, решающая дифференциальное уравнение :", 50, 50);
+            g.setColor(Color.BLUE);
+            g.drawString("Осцилограммы среднего положения молекул каждого из веществ :", 100 + WidthBox[0], 50);
+            g.drawString("Графики зависимости концентрации от координаты : ", 50 , 100 + HeightBox[0]);
+            g.drawString("Осцилограмма энтропии : ", 150 + WidthBox[0], 100 + HeightBox[0]);
+        }
         g.setColor(color);
     }
 
@@ -150,7 +161,9 @@ public class MyJFrame extends JFrame {
         setVisible(true);
     }
 
-    public MyJFrame(int width, int height) throws InterruptedException {
+    public MyJFrame(int width, int height, boolean is2m) throws InterruptedException {
+        is2models = is2m;
+        setBackground(Color.WHITE);
         setTitle("Diffusion models");
         setWidth(width);
         setHeight(height);

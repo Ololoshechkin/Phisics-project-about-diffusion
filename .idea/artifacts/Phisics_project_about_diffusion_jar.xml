@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Phisics project about diffusion:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Phisics_project_about_diffusion_jar</output-path>
+    <root id="archive" name="Phisics project about diffusion.jar">
+      <element id="module-output" name="Phisics project about diffusion" />
+    </root>
+  </artifact>
+</component>

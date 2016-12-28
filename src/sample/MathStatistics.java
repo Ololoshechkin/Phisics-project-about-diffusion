@@ -1,6 +1,5 @@
 package sample;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -51,18 +50,6 @@ public class MathStatistics {
 
     public double getProbability(double x, double mathExpectation, double dispersion) {
         return Math.exp(- (x - mathExpectation) * (x - mathExpectation) / (2.0 * dispersion)) / Math.sqrt(2.0 * Math.PI * dispersion);
-    }
-
-    public double getRandWithMathExpectation(double mathExpectation, double dispersion, double maxMod) {
-        int sampleSize = 500;
-        double[] sample = new double[sampleSize];
-        int sz = 0;
-        for (double x = -maxMod; x <= maxMod; x += 0.1) {
-            int cnt = Math.round((float)(sampleSize * getProbability(x, mathExpectation, dispersion)));
-            for (int i = 0; i < cnt; ++i) sample[sz++] = x;
-        }
-        int pos = Math.abs(rnd.nextInt()) % sz;
-        return sample[pos];
     }
 
 }

@@ -4,9 +4,6 @@ import javax.swing.text.Document;
 import java.awt.*;
 import java.util.ArrayList;
 
-/**
- * Created by Vadim on 27.12.16.
- */
 public class WindowWithDiffusionAndEntrophy extends Thread {
     private DiffusionDifferencial diffusion;
     private double D;
@@ -60,9 +57,9 @@ public class WindowWithDiffusionAndEntrophy extends Thread {
             D /= correctionSpeed * correctionSpeed;
         }
         borderAlpha = borderalpha;
-        System.out.println("borderalpga = " + borderalpha);
+        //System.out.println("borderalpga = " + borderalpha);
         Dimension screenSize =  Toolkit.getDefaultToolkit().getScreenSize();
-        window = new MyJFrame(screenSize.width, screenSize.height);
+        window = new MyJFrame(screenSize.width, screenSize.height, false);
         Width = (screenSize.width - 250) / 2;
         Height = (screenSize.height - 250) / 2;
 
@@ -131,10 +128,10 @@ public class WindowWithDiffusionAndEntrophy extends Thread {
             N1.add(n1);
             N2.add(n2);
             double curS = getEnthrophy1() + getEnthrophy2();
-            curS /= 1655175.5;
+            curS /= 1755175.5;
             curS = (curS - 0.8) * (0.6 / 0.2) + 0.4;
             S.add(curS);
-            System.out.println(S.get(S.size() - 1));
+            //System.out.println(S.get(S.size() - 1));
             if (iteration % 4 == 0 || delayedPause) {
                 window.clearGraph(1);
                 window.setStartPlotPoint(1, 0, N1.get(0), colorLeft);

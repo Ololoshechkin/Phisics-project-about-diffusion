@@ -12,7 +12,7 @@ import static javax.swing.UIManager.getColor;
 
 /**
  * Created by Vadim on 04.12.16.
-*/
+ */
 
 public class WindowWithDiffusions extends Thread {
     private double D;
@@ -36,7 +36,7 @@ public class WindowWithDiffusions extends Thread {
         }
         borderAlpha = borderalpha;
         Dimension screenSize =  Toolkit.getDefaultToolkit().getScreenSize();
-        window = new MyJFrame(screenSize.width, screenSize.height);
+        window = new MyJFrame(screenSize.width, screenSize.height, true);
         Width = (screenSize.width - 250) / 2;
         Height = (screenSize.height - 250) / 2;
 
