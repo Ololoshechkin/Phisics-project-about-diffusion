@@ -45,6 +45,7 @@ public class DiffusionDifferencial extends Diffusion {
     @Override
     public void update() {
         super.update();
+        alpha = -super.D * dt / (dx * dx);
         for (int x = 0; x < super.Width; ++x) {
             if (x == 0) {n2First[x] = nFirst[x] - alpha * (nFirst[x + 1] - nFirst[x]); continue;}
             if (x == super.Width - 1) {n2First[x] = nFirst[x] + alpha * (nFirst[x] - nFirst[x - 1]); continue;}

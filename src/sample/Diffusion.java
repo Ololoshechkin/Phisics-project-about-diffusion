@@ -7,6 +7,7 @@ import java.awt.*;
  */
 public class Diffusion {
     protected double D = 0.5;
+    protected double D0 = -1.132;
     protected int Width = 1000;
     protected double X0 = 100;
     protected double XFirst = X0, XSecond = X0;
@@ -32,6 +33,7 @@ public class Diffusion {
     }
 
     public void setD(double d) {
+        if (D0 == -1.132) D0 = d;
         D = d;
     }
 

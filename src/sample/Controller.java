@@ -158,6 +158,7 @@ public class Controller {
     }
 
     private boolean check2 (){
+        setAllDefaultParamsForGas();
         String s1 = subs1.getValue().toString(), s2 = subs2.getValue().toString();
         String s3 = temp.getText(), s4 = pres.getText();
         if (s2.equals("") || s1.equals("") || s3.equals("") || s4.equals("") || gasSub.getText().equals("")){
@@ -192,12 +193,12 @@ public class Controller {
             double koef = Double.parseDouble(dDiffusion.getText());
             java.lang.Object s1 = howProcess.getValue();
             if (s1.toString().equals("Сравнение моделей")) {
-                WindowWithDiffusions window = new WindowWithDiffusions(koef, k);
+                WindowWithDiffusions window = new WindowWithDiffusions(koef, k, false);
                 window.setColorFirstByRGB((int) (r1 * 255), (int) (g1 * 255), (int) (b1 * 255));
                 window.setColorSecondByRGB((int) (r2 * 255), (int) (g2 * 255), (int) (b2 * 255));
                 window.start();
             } else if (s1.toString().equals("График энтропии")){
-                WindowWithDiffusionAndEntrophy window = new WindowWithDiffusionAndEntrophy(koef, k);
+                WindowWithDiffusionAndEntrophy window = new WindowWithDiffusionAndEntrophy(koef, k, false);
                 window.setColorSecondByRGB((int) (r2 * 255), (int) (g2 * 255), (int) (b2 * 255));
                 window.setColorFirstByRGB((int) (r1 * 255), (int) (g1 * 255), (int) (b1 * 255));
                 window.start();
@@ -212,9 +213,17 @@ public class Controller {
         return chis/zn;
     }
 
+    void setAllDefaultParamsForGas() {
+        colorFirstGas.setValue(Color.RED);
+        colorSecondGas.setValue(Color.PURPLE);
+        pres.setText("100500");
+        temp.setText("293");
+        gasSub.setText("60");
+    }
+
     @FXML
     void setShowGasDiffusion () throws InterruptedException {
-        if (check2()){
+        if (check2()) {
             Color first = colorFirstGas.getValue();
             Color second = colorSecondGas.getValue();
             double r1 = first.getRed();
@@ -233,15 +242,17 @@ public class Controller {
             double k = Double.parseDouble(gasSub.getText()) / 100.;
             java.lang.Object what = box.getValue();
             if (what.toString().equals("Сравнение моделей")) {
-                WindowWithDiffusions window = new WindowWithDiffusions(koef, k);
+                WindowWithDiffusions window = new WindowWithDiffusions(koef, k, true);
                 window.start();
                 window.setColorFirstByRGB((int) (r1 * 255), (int) (g1 * 255), (int) (b1 * 255));
                 window.setColorSecondByRGB((int) (r2 * 255), (int) (g2 * 255), (int) (b2 * 255));
+                window.setT(Temperature);
             } else if (what.toString().equals("График энтропии")){
-                WindowWithDiffusionAndEntrophy window = new WindowWithDiffusionAndEntrophy(koef, k);
+                WindowWithDiffusionAndEntrophy window = new WindowWithDiffusionAndEntrophy(koef, k, true);
                 window.start();
                 window.setColorFirstByRGB((int) (r1 * 255), (int) (g1 * 255), (int) (b1 * 255));
                 window.setColorSecondByRGB((int) (r2 * 255), (int) (g2 * 255), (int) (b2 * 255));
+                window.setT(Temperature);
             }
         }
     }

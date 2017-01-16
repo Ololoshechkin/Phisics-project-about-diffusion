@@ -21,6 +21,7 @@ public class MyJFrame extends JFrame {
     private boolean oneMore = false;
     private KeyListener keyListener;
     private JSlider slider;
+    private JSlider sliderTemp;
     private JPanel panel;
     private int minSpeed = 0;
     private int maxSpeed = 20000;
@@ -158,10 +159,12 @@ public class MyJFrame extends JFrame {
     }
 
     void startGui() {
+        slider.setVisible(true);
+        sliderTemp.setVisible(true);
         setVisible(true);
     }
 
-    public MyJFrame(int width, int height, boolean is2m) throws InterruptedException {
+    public MyJFrame(int width, int height, boolean is2m, boolean gas) throws InterruptedException {
         is2models = is2m;
         setBackground(Color.WHITE);
         setTitle("Diffusion models");
@@ -192,6 +195,7 @@ public class MyJFrame extends JFrame {
                 }
                 if (e.getKeyCode() == KeyEvent.VK_D) {
                     slider.setValue(defaultSpeed);
+                    sliderTemp.setValue(defaultSpeed);
                 }
             }
         };
@@ -199,18 +203,35 @@ public class MyJFrame extends JFrame {
         panel = new JPanel();
         panel.setLayout(null);
         panel.setBackground(Color.DARK_GRAY);
-        slider = new JSlider(minSpeed, maxSpeed, defaultSpeed);
         Dimension screenSize =  Toolkit.getDefaultToolkit().getScreenSize();
-        slider.setBounds(50, (int) screenSize.getHeight() - 140, (int) screenSize.getWidth() - 200, 20);
-        slider.addKeyListener(keyListener);
-        panel.addKeyListener(keyListener);
-        addKeyListener(keyListener);
-        panel.add(slider);
+        if (!gas) {
+            slider = new JSlider(minSpeed, maxSpeed, defaultSpeed);
+            slider.setBounds(50, (int) screenSize.getHeight() - 140, (int) screenSize.getWidth() - 200, 20);
+            slider.addKeyListener(keyListener);
+            panel.addKeyListener(keyListener);
+            addKeyListener(keyListener);
+            panel.add(slider);
+        } else {
+            slider = new JSlider(minSpeed, maxSpeed, defaultSpeed);
+            sliderTemp = new JSlider(0, 2 * defaultSpeed, defaultSpeed);
+            slider.setBounds(50 - 1, (int) screenSize.getHeight() - 140, ((int) screenSize.getWidth() - 200) / 2, 20);
+            slider.addKeyListener(keyListener);
+            sliderTemp.setBounds(50 + 1 + (((int) screenSize.getWidth() - 200) / 2), (int) screenSize.getHeight() - 140, ((int) screenSize.getWidth() - 200) / 2, 20);
+            sliderTemp.addKeyListener(keyListener);
+            panel.addKeyListener(keyListener);
+            addKeyListener(keyListener);
+            panel.add(slider);
+            panel.add(sliderTemp);
+        }
         add(panel);
     }
 
     public double getSpeed() {
         return (double) slider.getValue() / (maxSpeed - minSpeed);
+    }
+
+    public double getRelativeTemp() {
+        return (double) sliderTemp.getValue() / defaultSpeed;
     }
 
     public void myRepaint() {

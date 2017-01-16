@@ -16,27 +16,22 @@ import static javax.swing.UIManager.getColor;
 
 public class WindowWithDiffusions extends Thread {
     private double D;
+    private double T;
     private double borderAlpha;
     private Diffusion[] diffusionModels = new Diffusion[2];
     private MyJFrame window;
     private int Width, Height;
     private Color colorLeft = Color.RED, colorRight = Color.BLUE;
     private double correctionSpeed = 1.0;
+    private boolean gas;
     //private SpeedJFrame speedWindow;
 
-    WindowWithDiffusions(double d, double borderalpha) throws InterruptedException {
-        D = d;
-        if (Math.abs(DiffusionDifferencial.getAlphaBy(D)) > 0.5) {
-            //x(t) = sqrt(2Dt)
-            // D' -> D / a => x'(t) -> x(t) / sqrt(a)
-            // cD' = 0.5 => D' = 0.5 / c
-            // correctionSpeed = 1/sqrt(0.5 / c   /    last / c) = sqrt(last / 0.5)
-            correctionSpeed = Math.sqrt(Math.abs(DiffusionDifferencial.getAlphaBy(D)) / 0.5);
-            D /= correctionSpeed * correctionSpeed;
-        }
+    WindowWithDiffusions(double d, double borderalpha, boolean _gas) throws InterruptedException {
+        gas = _gas;
+        setD(d);
         borderAlpha = borderalpha;
         Dimension screenSize =  Toolkit.getDefaultToolkit().getScreenSize();
-        window = new MyJFrame(screenSize.width, screenSize.height, true);
+        window = new MyJFrame(screenSize.width, screenSize.height, true, gas);
         Width = (screenSize.width - 250) / 2;
         Height = (screenSize.height - 250) / 2;
 
@@ -54,12 +49,28 @@ public class WindowWithDiffusions extends Thread {
         //speedWindow = new SpeedJFrame((int) screenSize.getWidth() - 200, (int) screenSize.getHeight() - 60,200, 60);
     }
 
+    public void setT(double temp) {
+        T = temp;
+    }
+
     public void setBorderAlpha(double alpha) {
         borderAlpha = alpha;
     }
 
     public void setD(double d) {
         D = d;
+        if (Math.abs(DiffusionDifferencial.getAlphaBy(D)) > 0.5) {
+            //x(t) = sqrt(2Dt)
+            // D' -> D / a => x'(t) -> x(t) / sqrt(a)
+            // cD' = 0.5 => D' = 0.5 / c
+            // correctionSpeed = 1/sqrt(0.5 / c   /    last / c) = sqrt(last / 0.5)
+            correctionSpeed = Math.sqrt(Math.abs(DiffusionDifferencial.getAlphaBy(D)) / 0.5);
+            D /= correctionSpeed * correctionSpeed;
+        }
+        for (int i = 0; i < 2; ++i) {
+            if (diffusionModels[i] != null)
+                diffusionModels[i].setD(D);
+        }
     }
 
     private Color getColorSuperposition(double nFirst, double nSecond) {
@@ -72,6 +83,7 @@ public class WindowWithDiffusions extends Thread {
     }
 
     private void updateModels(int iteration, boolean delayedPause) {
+        if (gas) setD(diffusionModels[0].D0 * Math.pow(window.getRelativeTemp(), 3./2.));
         for (int i = 0; i < 2; ++i) {
             for (int x = 0; x < Width; ++x) {
                 window.drawLine(i, x, diffusionModels[i].getColor(x));

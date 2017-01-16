@@ -1,8 +1,14 @@
 <component name="ArtifactManager">
-  <artifact type="jar" name="Phisics project about diffusion:jar">
+  <artifact type="jar" build-on-make="true" name="Phisics project about diffusion:jar">
     <output-path>$PROJECT_DIR$/out/artifacts/Phisics_project_about_diffusion_jar</output-path>
-    <root id="archive" name="Phisics project about diffusion.jar">
-      <element id="module-output" name="Phisics project about diffusion" />
+    <root id="archive" name="Phisics project about diffusion_jar.jar">
+      <element id="archive" name="Phisics project about diffusion.jar">
+        <element id="directory" name="META-INF">
+          <element id="file-copy" path="$USER_HOME$/Desktop/META-INF/MANIFEST.MF" />
+        </element>
+        <element id="module-output" name="Phisics project about diffusion" />
+        <element id="file-copy" path="$PROJECT_DIR$/input.txt" />
+      </element>
     </root>
   </artifact>
 </component>
