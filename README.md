@@ -6,4 +6,5 @@
 кастомное вещество и потом его использовать.
 
 
-![alt tag](https://raw.githubusercontent.com/Ololoshechkin/images/diff1.png)
+
+![alt tag](https://github.com/Ololoshechkin/images/diff1.png)
