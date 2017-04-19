@@ -5,6 +5,7 @@
 времени и температуру системы. В случае с газами можно выбирать из существвующих в системе веществ либо добавить и сохранить 
 кастомное вещество и потом его использовать.
 
-
-
-![alt tag](https://github.com/Ololoshechkin/images/diff1.png?raw=true)
+<p align="center">
+<img float="left" src="https://github.com/Ololoshechkin/images/diff1.png" width="250"/>
+<img float="left" src="https://github.com/Ololoshechkin/images/diff1.png" width="250"/>
+</p>
