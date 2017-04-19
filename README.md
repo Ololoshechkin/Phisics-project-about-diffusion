@@ -7,4 +7,4 @@
 
 
 
-![alt tag](https://github.com/Ololoshechkin/images/diff1.png)
+![alt tag](https://github.com/Ololoshechkin/images/diff1.png?raw=true)
