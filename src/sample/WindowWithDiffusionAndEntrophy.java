@@ -168,9 +168,7 @@ public class WindowWithDiffusionAndEntrophy extends Thread {
                 for (int x = 0; x < S.size(); ++x) {
                     int X = (int) (Width * S.get(x).getValue() / curTime);
                     window.drawPlotPoint(2, X, S.get(x).getKey());
-                    System.out.print("" + S.get(x).getValue() + " ");
                 }
-                System.out.println();
                 window.drawPlotPoint(2, Width - 1, S.get(S.size() - 1).getKey());
             }
         }
@@ -197,6 +195,9 @@ public class WindowWithDiffusionAndEntrophy extends Thread {
             if (!delayedPause && window.isWannaOneMore()) {
                 window.dontWannaOneMore();
                 window.dontWannaPaused();
+                N1.clear();
+                N2.clear();
+                S.clear();
                 delayedPause = true;
                 try {
                     diffusion = new DiffusionDifferencial();

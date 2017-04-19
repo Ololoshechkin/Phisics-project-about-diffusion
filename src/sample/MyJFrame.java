@@ -27,6 +27,7 @@ public class MyJFrame extends JFrame {
     private int maxSpeed = 20000;
     private int defaultSpeed = 500;
     private boolean is2models = true;
+    private boolean isGas = false;
 
     public void setWidth(int W) {
         Width = W;
@@ -160,11 +161,12 @@ public class MyJFrame extends JFrame {
 
     void startGui() {
         slider.setVisible(true);
-        sliderTemp.setVisible(true);
+        if (isGas) sliderTemp.setVisible(true);
         setVisible(true);
     }
 
     public MyJFrame(int width, int height, boolean is2m, boolean gas) throws InterruptedException {
+        isGas = gas;
         is2models = is2m;
         setBackground(Color.WHITE);
         setTitle("Diffusion models");

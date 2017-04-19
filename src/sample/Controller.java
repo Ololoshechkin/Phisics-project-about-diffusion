@@ -242,7 +242,7 @@ public class Controller {
             double k = Double.parseDouble(gasSub.getText()) / 100.;
             java.lang.Object what = box.getValue();
             if (what.toString().equals("Сравнение моделей")) {
-                WindowWithDiffusions window = new WindowWithDiffusions(koef, k, true);
+                WindowWithDiffusions window = new WindowWithDiffusions(koef, k, false);
                 window.start();
                 window.setColorFirstByRGB((int) (r1 * 255), (int) (g1 * 255), (int) (b1 * 255));
                 window.setColorSecondByRGB((int) (r2 * 255), (int) (g2 * 255), (int) (b2 * 255));
