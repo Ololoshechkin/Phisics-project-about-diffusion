@@ -6,6 +6,5 @@
 кастомное вещество и потом его использовать.
 
 <p align="center">
-<img float="left" src="https://github.com/Ololoshechkin/images/diff1.png" width="250"/>
-<img float="left" src="https://github.com/Ololoshechkin/images/diff1.png" width="250"/>
+<img float="left" src="screenshots/diff1.png" width="250"/>
 </p>
